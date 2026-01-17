@@ -1,10 +1,11 @@
 from pymongo import MongoClient
 import os
+import certifi
 
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 DB_NAME = "portfolio_db"
 
-client = MongoClient(MONGO_URI)
+client = MongoClient(MONGO_URI, tlsCAFile=certifi.where())
 db = client[DB_NAME]
 
 # Collections

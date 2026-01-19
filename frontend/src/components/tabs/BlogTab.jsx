@@ -3,6 +3,7 @@ import axios from 'axios';
 import { X, Calendar, ArrowRight } from 'lucide-react';
 import DOMPurify from 'dompurify';
 import { motion, AnimatePresence } from 'framer-motion';
+import { getApiUrl } from '../../config/api';
 
 const sanitizer = DOMPurify.sanitize ? DOMPurify : (DOMPurify.default || DOMPurify);
 
@@ -14,7 +15,7 @@ const BlogTab = () => {
     useEffect(() => {
         const fetchPosts = async () => {
             try {
-                const resp = await axios.get('http://localhost:5000/api/content');
+                const resp = await axios.get(getApiUrl('content'));
                 const blogData = resp.data.find(item => item.section === 'blog');
                 if (blogData && blogData.content) {
                     setPosts(blogData.content);

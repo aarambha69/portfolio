@@ -13,13 +13,14 @@ const PrivateRoute = ({ children }) => {
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import Maintenance from './pages/Maintenance';
+import { getApiUrl } from './config/api';
 
 function App() {
   const [maintenance, setMaintenance] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    axios.get('http://localhost:5000/api/settings_public')
+    axios.get(getApiUrl('settings_public'))
       .then(res => {
         setMaintenance(res.data.maintenance_mode);
         setLoading(false);

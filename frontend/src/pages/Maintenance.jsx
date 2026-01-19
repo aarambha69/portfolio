@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { getApiUrl } from '../config/api';
 import { Mail, Phone, MapPin, Loader2 } from 'lucide-react';
 
 const Maintenance = () => {
@@ -11,7 +12,7 @@ const Maintenance = () => {
             try {
                 // Fetch public settings/content to display contact info
                 // We'll try to get content 'personal_info'
-                const resp = await axios.get('http://localhost:5000/api/content');
+                const resp = await axios.get(getApiUrl('content'));
                 const personal = resp.data.find(item => item.section === 'personal_info')?.content;
                 setContactInfo(personal);
             } catch (err) {

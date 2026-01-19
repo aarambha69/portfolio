@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Send, Loader2 } from 'lucide-react';
+import { getApiUrl } from '../../config/api';
 
 const ContactTab = ({ mapUrl }) => {
     const [formData, setFormData] = useState({ name: '', email: '', phone: '', reason: '', message: '' });
@@ -27,7 +28,7 @@ const ContactTab = ({ mapUrl }) => {
         }
 
         try {
-            await axios.post('http://localhost:5000/api/contact', formData);
+            await axios.post(getApiUrl('contact'), formData);
             setStatus({ type: 'success', message: 'Message sent successfully!' });
             setFormData({ name: '', email: '', phone: '', reason: '', message: '' });
         } catch (err) {

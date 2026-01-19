@@ -3,6 +3,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion } from 'framer-motion';
+import { getApiUrl } from '../config/api';
 
 const Login = () => {
     const [mobile, setMobile] = useState('');
@@ -24,7 +25,7 @@ const Login = () => {
             if (error === 'mfa_required' && otp) {
                 payload.totp_code = otp;
             }
-            const resp = await axios.post('http://localhost:5000/api/auth/login', payload);
+            const resp = await axios.post(getApiUrl('auth/login'), payload);
             login(resp.data.token);
             navigate('/admin/dashboard');
         } catch (err) {
@@ -39,7 +40,7 @@ const Login = () => {
     const handleForgot = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/auth/forgot-password', { mobile });
+            await axios.post(getApiUrl('auth/forgot-password'), { mobile });
             setOtpSent(true);
             setError('');
         } catch (err) {
@@ -50,7 +51,7 @@ const Login = () => {
     const handleVerifyOtp = async (e) => {
         e.preventDefault();
         try {
-            const resp = await axios.post('http://localhost:5000/api/auth/verify-otp', { mobile, otp });
+            const resp = await axios.post(getApiUrl('auth/verify-otp'), { mobile, otp });
             setResetToken(resp.data.reset_token);
             setError('');
         } catch (err) {
@@ -61,7 +62,7 @@ const Login = () => {
     const handleReset = async (e) => {
         e.preventDefault();
         try {
-            await axios.post('http://localhost:5000/api/auth/reset-password', { mobile, new_password: newPassword, reset_token: resetToken });
+            await axios.post(getApiUrl('auth/reset-password'), { mobile, new_password: newPassword, reset_token: resetToken });
             setShowForgot(false);
             setOtpSent(false);
             setResetToken('');

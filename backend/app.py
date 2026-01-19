@@ -12,14 +12,8 @@ load_dotenv()
 app = Flask(__name__)
 
 # CORS Configuration - Allow production domain and localhost for development
-allowed_origins = [
-    "https://aarambhaaryal.com.np",
-    "https://www.aarambhaaryal.com.np",
-    "http://aarambhaaryal.com.np",
-    "http://www.aarambhaaryal.com.np",
-    "http://localhost:5173",
-    "http://127.0.0.1:5173"
-]
+# CORS Configuration - Allow production domain and localhost for development
+allowed_origins = os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",")
 
 CORS(app, 
      resources={r"/*": {"origins": allowed_origins}}, 

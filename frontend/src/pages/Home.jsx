@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { getApiUrl } from '../config/api';
 import Sidebar from '../components/Sidebar';
 import AboutTab from '../components/tabs/AboutTab';
 import ResumeTab from '../components/tabs/ResumeTab';
@@ -18,8 +19,8 @@ const Home = () => {
         const fetchContent = async () => {
             try {
                 const [contentResp, settingsResp] = await Promise.all([
-                    axios.get('http://localhost:5000/api/content'),
-                    axios.get('http://localhost:5000/api/settings_public') // We'll need this route
+                    axios.get(getApiUrl('content')),
+                    axios.get(getApiUrl('settings_public')) // We'll need this route
                 ]);
 
                 const data = {};

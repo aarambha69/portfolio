@@ -12,6 +12,7 @@ import ImageUpload from '../components/ImageUpload';
 import { saveAs } from 'file-saver';
 import Papa from 'papaparse';
 import 'react-quill-new/dist/quill.snow.css';
+import { getApiUrl } from '../config/api';
 
 // Lazy load ReactQuill to prevent module evaluation crashes
 const ReactQuill = React.lazy(() => import('react-quill-new'));
@@ -54,7 +55,7 @@ const QuillEditor = ({ value, onChange, token }) => {
                             const formData = new FormData();
                             formData.append('file', file);
                             try {
-                                const resp = await axios.post('http://localhost:5000/api/upload', formData, {
+                                const resp = await axios.post(getApiUrl('upload'), formData, {
                                     headers: { Authorization: `Bearer ${token}` }
                                 });
                                 // Access quill instance via ref if possible, or context
@@ -94,7 +95,7 @@ const AnalyticsTab = ({ token, messages }) => {
     useEffect(() => {
         const fetchAnalytics = async () => {
             try {
-                const resp = await axios.get('http://localhost:5000/api/analytics', {
+                const resp = await axios.get(getApiUrl('analytics'), {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setStatsData(resp.data);
@@ -287,7 +288,7 @@ const BroadcastTab = ({ token }) => {
 
         try {
             // Using fetch instead of axios to debug Network Error
-            const response = await fetch('http://localhost:5000/api/broadcast-message', {
+            const response = await fetch(getApiUrl('broadcast-message'), {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -431,9 +432,9 @@ const AdminDashboard = () => {
     const fetchData = async () => {
         try {
             const [contentResp, messagesResp, settingsResp] = await Promise.all([
-                axios.get('http://localhost:5000/api/content'),
-                axios.get('http://localhost:5000/api/inbox', { headers: { Authorization: `Bearer ${token}` } }),
-                axios.get('http://localhost:5000/api/settings', { headers: { Authorization: `Bearer ${token}` } })
+                axios.get(getApiUrl('content')),
+                axios.get(getApiUrl('inbox'), { headers: { Authorization: `Bearer ${token}` } }),
+                axios.get(getApiUrl('settings'), { headers: { Authorization: `Bearer ${token}` } })
             ]);
 
             const contentMap = {};
@@ -457,7 +458,7 @@ const AdminDashboard = () => {
 
     const fetchStats = async () => {
         try {
-            const res = await axios.get('http://localhost:5000/api/dashboard-stats', {
+            const res = await axios.get(getApiUrl('dashboard-stats'), {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setStats(res.data);
@@ -468,7 +469,7 @@ const AdminDashboard = () => {
 
     const updateContent = async (section, data) => {
         try {
-            await axios.post('http://localhost:5000/api/content',
+            await axios.post(getApiUrl('content'),
                 { section, content: data },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -481,7 +482,7 @@ const AdminDashboard = () => {
 
     const updateAdminSettings = async (data) => {
         try {
-            await axios.post('http://localhost:5000/api/settings', data, {
+            await axios.post(getApiUrl('settings'), data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             alert('Settings updated');
@@ -794,7 +795,7 @@ const AdminDashboard = () => {
                 <button
                     onClick={async () => {
                         try {
-                            const response = await axios.get('http://localhost:5000/api/export-messages', {
+                            const response = await axios.get(getApiUrl('export-messages'), {
                                 headers: { Authorization: `Bearer ${token}` },
                                 responseType: 'blob',
                             });
@@ -864,7 +865,7 @@ const AdminDashboard = () => {
                                     formData.append('file', file);
                                     try {
                                         console.log("Sending upload request...");
-                                        const resp = await axios.post('http://localhost:5000/api/upload', formData, {
+                                        const resp = await axios.post(getApiUrl('upload'), formData, {
                                             headers: {
                                                 'Authorization': `Bearer ${token}`
                                             }
@@ -874,7 +875,7 @@ const AdminDashboard = () => {
                                         setContent({ ...content, resume: newResume });
                                         // Auto-save content after upload
                                         console.log("Saving content...");
-                                        await axios.post('http://localhost:5000/api/content',
+                                        await axios.post(getApiUrl('content'),
                                             { section: 'resume', content: newResume },
                                             { headers: { Authorization: `Bearer ${token}` } }
                                         );
@@ -1059,7 +1060,7 @@ const AdminDashboard = () => {
             return;
         }
         try {
-            await axios.post('http://localhost:5000/api/auth/request-mobile-change', {}, { headers: { Authorization: `Bearer ${token}` } });
+            await axios.post(getApiUrl('auth/request-mobile-change'), {}, { headers: { Authorization: `Bearer ${token}` } });
             setChangeMobileStep(1);
             alert('OTP sent to your CURRENT registered mobile number.');
         } catch (err) {
@@ -1069,7 +1070,7 @@ const AdminDashboard = () => {
 
     const handleVerifyMobileOtp = async () => {
         try {
-            await axios.post('http://localhost:5000/api/auth/verify-mobile-change', {
+            await axios.post(getApiUrl('auth/verify-mobile-change'), {
                 otp: mobileForm.otp,
                 new_mobile: mobileForm.newMobile
             }, { headers: { Authorization: `Bearer ${token}` } });
@@ -1092,7 +1093,7 @@ const AdminDashboard = () => {
                         <button
                             onClick={async () => {
                                 try {
-                                    const res = await axios.post('http://localhost:5000/api/auth/setup-2fa', {}, { headers: { Authorization: `Bearer ${token}` } });
+                                    const res = await axios.post(getApiUrl('auth/setup-2fa'), {}, { headers: { Authorization: `Bearer ${token}` } });
                                     const { secret, qr_code } = res.data;
                                     setTwoFaSetupData({ secret, qr_code, step: 1 });
                                 } catch (err) {
@@ -1109,7 +1110,7 @@ const AdminDashboard = () => {
                                 const pwd = prompt("Enter your password to disable 2FA:");
                                 if (pwd) {
                                     try {
-                                        await axios.post('http://localhost:5000/api/auth/disable-2fa', { password: pwd }, { headers: { Authorization: `Bearer ${token}` } });
+                                        await axios.post(getApiUrl('auth/disable-2fa'), { password: pwd }, { headers: { Authorization: `Bearer ${token}` } });
                                         alert("2FA Disabled Successfully!");
                                     } catch (err) {
                                         alert("Failed to disable 2FA");

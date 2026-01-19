@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { Camera, Image as ImageIcon, Loader, CheckCircle } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 const ImageUpload = ({ initialImage, onUpload, token, label = "Upload Image" }) => {
     const [uploading, setUploading] = useState(false);
@@ -15,7 +16,7 @@ const ImageUpload = ({ initialImage, onUpload, token, label = "Upload Image" }) 
         formData.append('file', file);
 
         try {
-            const resp = await axios.post('http://localhost:5000/api/upload', formData, {
+            const resp = await axios.post(getApiUrl('upload'), formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Bearer ${token}`
